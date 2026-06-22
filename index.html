@@ -1,0 +1,2253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Analyst Learning Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      /* ===== RESET & GLOBAL ===== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px;
+      }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        background: linear-gradient(145deg, #f0e7fe 0%, #e2f3e2 100%);
+        color: #1e293b;
+        line-height: 1.5;
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+      h1,
+      h2,
+      h3,
+      .section-title,
+      .nav-logo {
+        font-family: "Outfit", sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* ===== PROGRESS BAR ===== */
+      #scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 4px;
+        background: linear-gradient(90deg, #8b5cf6, #10b981, #8b5cf6);
+        background-size: 200% auto;
+        animation: gradientShift 3s linear infinite;
+        z-index: 1001;
+        box-shadow: 0 0 15px #8b5cf6;
+        transition: width 0.1s ease;
+      }
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 200% 0%;
+        }
+      }
+
+      /* ===== PARTICLES ===== */
+      #particle-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.3;
+      }
+
+      /* ===== REVEAL ANIMATIONS ===== */
+      .reveal {
+        opacity: 0;
+        filter: blur(5px);
+        transform: scale(0.95);
+        transition: opacity 1s cubic-bezier(0.2, 0.9, 0.3, 1),
+          transform 1s cubic-bezier(0.2, 0.9, 0.3, 1), filter 1s ease;
+      }
+      .reveal.revealed {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+      }
+      .stagger > * {
+        transition-delay: 0.1s;
+      }
+      .stagger > *:nth-child(2) {
+        transition-delay: 0.2s;
+      }
+      .stagger > *:nth-child(3) {
+        transition-delay: 0.3s;
+      }
+      .stagger > *:nth-child(4) {
+        transition-delay: 0.4s;
+      }
+      .stagger > *:nth-child(5) {
+        transition-delay: 0.5s;
+      }
+
+      /* ===== GLOW BORDERS ===== */
+      .glow-border {
+        transition: box-shadow 0.3s ease, transform 0.3s ease,
+          border-color 0.3s ease;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+      }
+      .glow-border:hover {
+        box-shadow: 0 0 25px #8b5cf6, 0 0 45px rgba(16, 185, 129, 0.4);
+        border-color: #8b5cf6;
+        transform: translateY(-4px);
+      }
+
+      /* ===== NAVIGATION ===== */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        padding: 0.8rem 2rem;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      }
+      .navbar:hover {
+        box-shadow: 0 0 30px #8b5cf6;
+      }
+      .nav-logo {
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: #8b5cf6;
+        text-shadow: 0 0 10px #8b5cf6;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .nav-logo i {
+        font-size: 1.5rem;
+      }
+      .nav-toggle {
+        display: none;
+      }
+      .nav-hamburger {
+        display: none;
+        font-size: 2rem;
+        color: #1e293b;
+        cursor: pointer;
+      }
+      .nav-menu {
+        display: flex;
+        gap: 1.5rem;
+        list-style: none;
+        flex-wrap: wrap;
+      }
+      .nav-menu li a {
+        text-decoration: none;
+        font-weight: 600;
+        color: #1e293b;
+        padding: 0.5rem 0;
+        position: relative;
+        font-size: 0.95rem;
+        transition: color 0.3s;
+      }
+      .nav-menu li a::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: #8b5cf6;
+        transition: width 0.25s ease;
+        box-shadow: 0 0 10px #8b5cf6;
+      }
+      .nav-menu li a:hover::after {
+        width: 100%;
+      }
+      .nav-menu li a:hover {
+        color: #8b5cf6;
+      }
+      .nav-menu li a.active {
+        color: #8b5cf6;
+      }
+      .nav-menu li a.active::after {
+        width: 100%;
+      }
+
+      @media screen and (max-width: 768px) {
+        .navbar {
+          padding: 0.8rem 1.5rem;
+        }
+        .nav-hamburger {
+          display: block;
+        }
+        .nav-menu {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          background: rgba(255, 255, 255, 0.95);
+          padding: 1.5rem 0;
+          margin-top: 0.8rem;
+          border-top: 1px solid #e2e8f0;
+          border-radius: 0 0 20px 20px;
+          gap: 0.5rem;
+        }
+        .nav-menu li {
+          text-align: center;
+          padding: 0.3rem 0;
+        }
+        .nav-toggle:checked ~ .nav-menu {
+          display: flex;
+        }
+      }
+
+      /* ===== SECTION STYLES ===== */
+      .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 3rem;
+        color: #2d3a5e;
+        text-shadow: 0 0 10px #8b5cf6;
+      }
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 100px;
+        height: 4px;
+        background: #8b5cf6;
+        margin: 1rem auto 0;
+        border-radius: 4px;
+        box-shadow: 0 0 15px #8b5cf6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 0.85rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 2px solid #8b5cf6;
+        background: transparent;
+        color: #1e293b;
+        box-shadow: 0 0 15px #8b5cf6;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: #8b5cf6;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: transparent;
+        color: #8b5cf6;
+        box-shadow: 0 0 30px #8b5cf6;
+      }
+      .btn-outline:hover {
+        background: #8b5cf6;
+        color: white;
+      }
+      .btn-sm {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.9rem;
+      }
+      .btn-green {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+      }
+      .btn-green:hover {
+        background: transparent;
+        color: #10b981;
+        box-shadow: 0 0 30px #10b981;
+      }
+
+      /* ===== HERO SECTION ===== */
+      .hero {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #d9c9ff, #c0e5c0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: left;
+        color: #1e293b;
+        padding: 100px 20px 80px;
+        position: relative;
+        z-index: 2;
+        overflow: hidden;
+      }
+      .hero-content {
+        max-width: 1200px;
+        width: 100%;
+        position: relative;
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(8px);
+        padding: 2.5rem;
+        border-radius: 60px;
+        box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+      }
+      .hero-row {
+        display: flex;
+        align-items: center;
+        gap: 3rem;
+      }
+      .hero-text {
+        flex: 1;
+      }
+      .hero-text h1 {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        color: #2d3a5e;
+        text-shadow: 0 0 15px #8b5cf6;
+      }
+      .hero-text h2 {
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        color: #2d3a5e;
+      }
+      .hero-intro {
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 0 0 1.5rem;
+      }
+      .hero-mission {
+        font-size: 1.2rem;
+        font-style: italic;
+        background: rgba(139, 92, 246, 0.15);
+        display: inline-block;
+        padding: 0.4rem 2rem;
+        border-radius: 60px;
+        backdrop-filter: blur(4px);
+        margin-bottom: 2rem;
+        border: 1px solid #8b5cf6;
+        box-shadow: 0 0 15px #8b5cf6;
+        color: #1e293b;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .hero-icons {
+        margin: 1rem 0 1.5rem;
+        display: flex;
+        gap: 2rem;
+        font-size: 2.5rem;
+      }
+      .hero-icons i {
+        filter: drop-shadow(0 0 12px #8b5cf6);
+        transition: transform 0.2s;
+      }
+      .hero-icons i:hover {
+        transform: scale(1.2);
+      }
+      .hero-icons .fa-python {
+        color: #3776ab;
+      }
+      .hero-icons .fa-database {
+        color: #00758f;
+      }
+      .hero-icons .fa-chart-simple {
+        color: #f2c811;
+      }
+      .hero-icons .fa-file-excel {
+        color: #1d6f42;
+      }
+      .hero-icons .fa-chart-pie {
+        color: #e44d2e;
+      }
+
+      /* Profile Image */
+      .hero-image-wrapper {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      .hero-image {
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        padding: 6px;
+        background: linear-gradient(145deg, #8b5cf6, #10b981);
+        box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+        animation: floatProfile 6s ease-in-out infinite;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .hero-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid white;
+      }
+      .hero-image .fallback-icon {
+        display: none;
+        font-size: 5rem;
+        color: white;
+        background: #8b5cf6;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid white;
+      }
+      .hero-image.error .fallback-icon {
+        display: flex;
+      }
+      .hero-image.error img {
+        display: none;
+      }
+      @keyframes floatProfile {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+      .hero-image:hover {
+        transform: scale(1.05) translateY(-5px);
+        box-shadow: 0 0 50px #8b5cf6, 0 0 80px #10b981;
+      }
+
+      @media screen and (max-width: 900px) {
+        .hero-row {
+          flex-direction: column;
+          text-align: center;
+          gap: 2rem;
+        }
+        .hero-image-wrapper {
+          margin: 0 auto;
+        }
+        .hero-image {
+          width: 220px;
+          height: 220px;
+        }
+        .hero-text {
+          width: 100%;
+        }
+        .hero-text h1 {
+          font-size: 3rem;
+        }
+        .hero-buttons {
+          justify-content: center;
+        }
+        .hero-icons {
+          justify-content: center;
+        }
+      }
+      @media screen and (max-width: 480px) {
+        .hero-image {
+          width: 180px;
+          height: 180px;
+        }
+        .hero-text h1 {
+          font-size: 2.5rem;
+        }
+      }
+
+      /* ===== SECTIONS ===== */
+      .objectives,
+      .about,
+      .details,
+      .modules,
+      .quiz-section,
+      .tasks-section,
+      .projects-section,
+      .datasets-section,
+      .resources-section,
+      .profile-section {
+        padding: 80px 20px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .objectives-card,
+      .about-card,
+      .detail-item,
+      .module-card,
+      .quiz-card,
+      .task-card,
+      .project-card,
+      .dataset-card,
+      .resource-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
+        border: 1px solid #8b5cf6;
+        box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
+        transition: all 0.3s ease;
+      }
+      .objectives-card {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2.5rem 3rem;
+        border-radius: 32px;
+        text-align: center;
+        font-size: 1.35rem;
+      }
+
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .about-card {
+        padding: 2.2rem 2rem;
+        border-radius: 28px;
+      }
+      .card-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.8rem;
+        background: #ede9fe;
+        width: 65px;
+        height: 65px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8b5cf6;
+        border: 1px solid #8b5cf6;
+        box-shadow: 0 0 15px #8b5cf6;
+      }
+      .skill-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 0.4rem 1.2rem 0.4rem 1rem;
+        border-radius: 40px;
+        font-weight: 500;
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        transition: all 0.2s;
+        backdrop-filter: blur(4px);
+        margin: 0.3rem;
+      }
+      .skill-tag:hover {
+        box-shadow: 0 0 20px #8b5cf6;
+        border-color: #8b5cf6;
+        background: white;
+      }
+      .skill-tag i {
+        font-size: 1.1rem;
+      }
+      .skill-tag .fa-python {
+        color: #3776ab;
+      }
+      .skill-tag .fa-database {
+        color: #00758f;
+      }
+      .skill-tag .fa-chart-simple {
+        color: #f2c811;
+      }
+      .skill-tag .fa-file-excel {
+        color: #1d6f42;
+      }
+      .skill-tag .fa-calculator {
+        color: #e44d2e;
+      }
+      .skill-tag .fa-table {
+        color: #00758f;
+      }
+
+      .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .detail-item {
+        padding: 1.8rem 1.5rem;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+      }
+      .detail-icon {
+        font-size: 2rem;
+        min-width: 48px;
+        text-align: center;
+        background: #ede9fe;
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8b5cf6;
+        border: 1px solid #8b5cf6;
+        transition: all 0.2s ease;
+      }
+      .detail-icon:hover {
+        box-shadow: 0 0 20px #8b5cf6;
+        border-color: #8b5cf6;
+        background: white;
+        transform: scale(1.05);
+      }
+
+      /* ===== MODULES GRID ===== */
+      .modules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .module-card {
+        padding: 2rem;
+        border-radius: 28px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .module-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 0 40px rgba(139, 92, 246, 0.4);
+      }
+      .module-card .module-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+      .module-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+      }
+      .module-card .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        margin: 0.8rem 0;
+        overflow: hidden;
+      }
+      .module-card .progress-bar .fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8b5cf6, #10b981);
+        border-radius: 4px;
+        transition: width 1s ease;
+      }
+      .module-card .module-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #6b7280;
+      }
+
+      /* ===== QUIZ ===== */
+      .quiz-tabs {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+      .quiz-tab {
+        padding: 0.6rem 1.8rem;
+        border-radius: 40px;
+        border: 2px solid #8b5cf6;
+        background: transparent;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: #1e293b;
+      }
+      .quiz-tab.active {
+        background: #8b5cf6;
+        color: white;
+        box-shadow: 0 0 20px #8b5cf6;
+      }
+      .quiz-tab:hover {
+        box-shadow: 0 0 20px #8b5cf6;
+      }
+
+      .quiz-card {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        border-radius: 28px;
+      }
+      .quiz-card .question {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+      }
+      .quiz-card .options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      .quiz-card .options label {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem 1.2rem;
+        border-radius: 12px;
+        border: 2px solid #e5e7eb;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .quiz-card .options label:hover {
+        border-color: #8b5cf6;
+        background: rgba(139, 92, 246, 0.05);
+      }
+      .quiz-card .options label.correct {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+      }
+      .quiz-card .options label.wrong {
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+      }
+      .quiz-card .quiz-result {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 600;
+      }
+      .quiz-card .quiz-result.correct {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+      }
+      .quiz-card .quiz-result.wrong {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+      }
+
+      /* ===== TASKS ===== */
+      .tasks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .task-card {
+        padding: 1.8rem;
+        border-radius: 28px;
+      }
+      .task-card .task-status {
+        display: inline-block;
+        padding: 0.2rem 1rem;
+        border-radius: 40px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .task-card .task-status.pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .task-card .task-status.done {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      /* ===== PROJECTS ===== */
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .project-card {
+        padding: 1.8rem;
+        border-radius: 28px;
+      }
+      .project-card .difficulty {
+        display: inline-block;
+        padding: 0.2rem 1rem;
+        border-radius: 40px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .project-card .difficulty.beginner {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .project-card .difficulty.intermediate {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .project-card .difficulty.advanced {
+        background: #fecaca;
+        color: #991b1b;
+      }
+
+      /* ===== DATASETS ===== */
+      .datasets-controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+      .datasets-controls input,
+      .datasets-controls select {
+        padding: 0.7rem 1.2rem;
+        border-radius: 40px;
+        border: 2px solid #8b5cf6;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(4px);
+        outline: none;
+        font-size: 0.95rem;
+        min-width: 200px;
+      }
+      .datasets-controls input:focus,
+      .datasets-controls select:focus {
+        box-shadow: 0 0 20px #8b5cf6;
+      }
+      .datasets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .dataset-card {
+        padding: 1.8rem;
+        border-radius: 28px;
+      }
+      .dataset-card .favorite-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      .dataset-card .favorite-btn:hover {
+        transform: scale(1.2);
+      }
+      .dataset-card .favorite-btn.liked {
+        color: #ef4444;
+      }
+
+      /* ===== RESOURCES ===== */
+      .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .resource-card {
+        padding: 1.8rem;
+        border-radius: 28px;
+        text-align: center;
+      }
+      .resource-card .resource-icon {
+        font-size: 3rem;
+        margin-bottom: 0.8rem;
+      }
+
+      /* ===== PROFILE SECTION ===== */
+      .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .profile-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
+        padding: 2rem;
+        border-radius: 28px;
+        border: 1px solid #8b5cf6;
+        box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
+      }
+      .profile-card h3 {
+        margin-bottom: 1rem;
+        color: #2d3a5e;
+      }
+      .profile-card .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      @media screen and (max-width: 768px) {
+        .about-grid,
+        .profile-grid {
+          grid-template-columns: 1fr;
+        }
+        .section-title {
+          font-size: 2rem;
+        }
+        .hero-content {
+          padding: 1.5rem;
+        }
+      }
+
+      /* ===== CHATBOT ===== */
+      .chat-toggle {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: #8b5cf6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 28px;
+        box-shadow: 0 0 25px #8b5cf6;
+        cursor: pointer;
+        z-index: 1002;
+        border: 2px solid white;
+        transition: all 0.3s;
+      }
+      .chat-toggle:hover {
+        box-shadow: 0 0 40px #8b5cf6;
+        transform: scale(1.05);
+      }
+      .chat-box {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 380px;
+        max-width: 90vw;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 24px;
+        box-shadow: 0 0 50px #8b5cf6;
+        z-index: 1002;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #8b5cf6;
+        backdrop-filter: blur(10px);
+      }
+      .chat-box.open {
+        display: flex;
+      }
+      .chat-header {
+        background: #8b5cf6;
+        color: white;
+        padding: 16px 20px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .chat-header .close-btn {
+        cursor: pointer;
+        font-size: 1.5rem;
+      }
+      .chat-messages {
+        padding: 16px;
+        min-height: 240px;
+        max-height: 320px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .message {
+        padding: 10px 14px;
+        border-radius: 18px;
+        max-width: 80%;
+        word-wrap: break-word;
+      }
+      .message.bot {
+        background: #ede9fe;
+        align-self: flex-start;
+      }
+      .message.user {
+        background: #8b5cf6;
+        color: white;
+        align-self: flex-end;
+      }
+      .typing-indicator {
+        display: none;
+        gap: 4px;
+        padding: 10px 14px;
+        background: #ede9fe;
+        border-radius: 18px;
+        align-self: flex-start;
+        width: fit-content;
+      }
+      .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        background: #8b5cf6;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+      }
+      .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.6;
+        }
+        30% {
+          transform: translateY(-8px);
+          opacity: 1;
+        }
+      }
+      .chat-input-area {
+        display: flex;
+        border-top: 1px solid #ddd;
+        padding: 10px;
+        gap: 8px;
+      }
+      .chat-input-area input {
+        flex: 1;
+        border: none;
+        padding: 10px;
+        border-radius: 30px;
+        background: #f1f5f9;
+        outline: none;
+        font-size: 0.95rem;
+      }
+      .chat-input-area button {
+        background: #8b5cf6;
+        border: none;
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .chat-input-area button:hover {
+        background: #7c3aed;
+        transform: scale(1.05);
+      }
+      .suggestions {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem 1rem;
+        flex-wrap: wrap;
+      }
+      .suggestions button {
+        padding: 0.3rem 1rem;
+        border-radius: 40px;
+        border: 1px solid #8b5cf6;
+        background: transparent;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.3s;
+        color: #1e293b;
+      }
+      .suggestions button:hover {
+        background: #8b5cf6;
+        color: white;
+      }
+
+      /* ===== INTERVIEW PREP ===== */
+      .interview-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .interview-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
+        padding: 1.8rem;
+        border-radius: 28px;
+        border: 1px solid #8b5cf6;
+        box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
+      }
+      .interview-card .q {
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .interview-card .q:hover {
+        color: #8b5cf6;
+      }
+      .interview-card .answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding-top: 0;
+      }
+      .interview-card .answer.open {
+        max-height: 300px;
+        padding-top: 1rem;
+      }
+
+      @media screen and (max-width: 768px) {
+        .interview-grid {
+          grid-template-columns: 1fr;
+        }
+        .chat-box {
+          width: 90vw;
+          right: 5vw;
+          bottom: 80px;
+        }
+      }
+
+      /* ===== MODAL ===== */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(8px);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal.show {
+        display: flex;
+      }
+      .modal-content {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 2.5rem;
+        border-radius: 40px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        border: 2px solid #8b5cf6;
+        box-shadow: 0 0 60px #8b5cf6;
+        position: relative;
+      }
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 2rem;
+        cursor: pointer;
+        color: #8b5cf6;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== PARTICLES ===== -->
+    <canvas id="particle-canvas"></canvas>
+    <div id="scroll-progress"></div>
+
+    <!-- ===== MODAL ===== -->
+    <div id="welcomeModal" class="modal show">
+      <div class="modal-content">
+        <span class="modal-close" id="closeModal">&times;</span>
+        <h2>📊 Welcome to Data Analyst Learning Hub</h2>
+        <p style="margin: 1rem 0">
+          Your complete platform for mastering data analytics. Track progress,
+          take quizzes, explore projects, and more!
+        </p>
+        <div
+          style="
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+          "
+        >
+          <span class="skill-tag"><i class="fas fa-python"></i> Python</span>
+          <span class="skill-tag"><i class="fas fa-database"></i> SQL</span>
+          <span class="skill-tag"
+            ><i class="fas fa-chart-simple"></i> Power BI</span
+          >
+          <span class="skill-tag"><i class="fas fa-file-excel"></i> Excel</span>
+        </div>
+        <button class="btn btn-primary" id="modalGotIt">
+          🚀 Start Learning
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="navbar">
+      <div class="nav-logo">
+        <i class="fas fa-database"></i>
+        <span>Data Analyst Hub</span>
+      </div>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <label for="nav-toggle" class="nav-hamburger">☰</label>
+      <ul class="nav-menu">
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+        <li><a href="#tasks">Tasks</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#datasets">Datasets</a></li>
+        <li><a href="#resources">Resources</a></li>
+        <li><a href="#profile">Profile</a></li>
+      </ul>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section id="home" class="hero reveal">
+      <div class="hero-content">
+        <div class="hero-row">
+          <div class="hero-image-wrapper">
+            <div class="hero-image" id="profileContainer">
+              <img
+                id="profileImg"
+                src="https://raw.githubusercontent.com/shalu2517/DATA_ANALYST_APP/main/logo.png"
+                alt="Profile"
+              />
+              <div class="fallback-icon">
+                <i class="fas fa-user-circle"></i>
+              </div>
+            </div>
+          </div>
+          <div class="hero-text">
+            <h1>Data Analyst Learning Hub</h1>
+            <h2>Master Data Analytics • Python • SQL • Power BI</h2>
+            <div class="hero-icons">
+              <i class="fab fa-python"></i>
+              <i class="fas fa-database"></i>
+              <i class="fas fa-chart-simple"></i>
+              <i class="fas fa-file-excel"></i>
+              <i class="fas fa-chart-pie"></i>
+            </div>
+            <p class="hero-intro">
+              Your complete platform for learning data analytics. Track your
+              progress, practice with real datasets, and build your portfolio.
+            </p>
+            <div class="hero-mission">
+              📈 "Learn, Practice, and Master Data Analytics"
+            </div>
+            <div class="hero-buttons">
+              <a href="#modules" class="btn btn-primary">📚 Start Learning</a>
+              <a href="#quiz" class="btn btn-outline">🧠 Take a Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== OBJECTIVES ===== -->
+    <section id="objectives" class="objectives reveal">
+      <div class="container">
+        <h2 class="section-title">🎯 Learning Objectives</h2>
+        <div class="objectives-card glow-border">
+          Master data analytics through hands-on practice. Complete modules,
+          earn badges, and build real-world projects. Progress from beginner to
+          advanced level with our structured curriculum.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MODULES ===== -->
+    <section id="modules" class="modules reveal">
+      <div class="container">
+        <h2 class="section-title">📚 Learning Modules</h2>
+        <div class="modules-grid" id="modulesGrid">
+          <!-- Modules injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== QUIZ ===== -->
+    <section id="quiz" class="quiz-section reveal">
+      <div class="container">
+        <h2 class="section-title">🧠 Quiz Center</h2>
+        <div class="quiz-tabs" id="quizTabs">
+          <button class="quiz-tab active" data-level="beginner">
+            Beginner
+          </button>
+          <button class="quiz-tab" data-level="intermediate">
+            Intermediate
+          </button>
+          <button class="quiz-tab" data-level="advanced">Advanced</button>
+        </div>
+        <div class="quiz-card" id="quizCard">
+          <!-- Quiz injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TASKS ===== -->
+    <section id="tasks" class="tasks-section reveal">
+      <div class="container">
+        <h2 class="section-title">✅ Tasks</h2>
+        <div class="tasks-grid" id="tasksGrid">
+          <!-- Tasks injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROJECTS ===== -->
+    <section id="projects" class="projects-section reveal">
+      <div class="container">
+        <h2 class="section-title">💡 Project Ideas</h2>
+        <div class="projects-grid" id="projectsGrid">
+          <!-- Projects injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DATASETS ===== -->
+    <section id="datasets" class="datasets-section reveal">
+      <div class="container">
+        <h2 class="section-title">📊 Dataset Hub</h2>
+        <div class="datasets-controls">
+          <input
+            type="text"
+            id="datasetSearch"
+            placeholder="🔍 Search datasets..."
+          />
+          <select id="datasetFilter">
+            <option value="all">All Categories</option>
+            <option value="business">Business</option>
+            <option value="health">Health</option>
+            <option value="education">Education</option>
+            <option value="finance">Finance</option>
+            <option value="ecommerce">E-commerce</option>
+          </select>
+        </div>
+        <div class="datasets-grid" id="datasetsGrid">
+          <!-- Datasets injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RESOURCES ===== -->
+    <section id="resources" class="resources-section reveal">
+      <div class="container">
+        <h2 class="section-title">📖 Resource Center</h2>
+        <div class="resources-grid" id="resourcesGrid">
+          <!-- Resources injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROFILE ===== -->
+    <section id="profile" class="profile-section reveal">
+      <div class="container">
+        <h2 class="section-title">👤 Your Profile</h2>
+        <div class="profile-grid" id="profileGrid">
+          <div class="profile-card">
+            <h3><i class="fas fa-chart-line"></i> Learning Statistics</h3>
+            <div class="stat-item">
+              <span>Modules Completed</span><span id="statModules">0</span>
+            </div>
+            <div class="stat-item">
+              <span>Quizzes Taken</span><span id="statQuizzes">0</span>
+            </div>
+            <div class="stat-item">
+              <span>Tasks Done</span><span id="statTasks">0</span>
+            </div>
+            <div class="stat-item">
+              <span>Streak</span><span id="statStreak">0 days</span>
+            </div>
+          </div>
+          <div class="profile-card">
+            <h3><i class="fas fa-star"></i> Achievements</h3>
+            <div id="achievementsList">
+              <p style="color: #6b7280">
+                Complete modules to earn achievements!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CHATBOT ===== -->
+    <div class="chat-toggle" id="chatToggle">
+      <i class="fas fa-robot"></i>
+    </div>
+    <div class="chat-box" id="chatBox">
+      <div class="chat-header">
+        <span><i class="fas fa-robot"></i> AI Learning Assistant</span>
+        <span class="close-btn" id="chatClose">&times;</span>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+          Hello! I'm your AI learning assistant. Ask me about data analytics,
+          modules, or anything else!
+        </div>
+      </div>
+      <div class="typing-indicator" id="typingIndicator">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="suggestions">
+        <button data-msg="What is data analytics?">
+          What is data analytics?
+        </button>
+        <button data-msg="How to learn Python for data analysis?">
+          Learn Python
+        </button>
+        <button data-msg="What are the best SQL resources?">
+          SQL resources
+        </button>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Ask me anything..." />
+        <button id="chatSend"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <script>
+      // ===== DATA =====
+      const modulesData = [
+        {
+          id: "excel",
+          icon: "📊",
+          name: "Excel",
+          desc: "Master spreadsheets, formulas, and data analysis",
+          progress: 0,
+          color: "#1d6f42",
+        },
+        {
+          id: "sql",
+          icon: "🗄️",
+          name: "SQL",
+          desc: "Query databases and manipulate data",
+          progress: 0,
+          color: "#00758f",
+        },
+        {
+          id: "python",
+          icon: "🐍",
+          name: "Python",
+          desc: "Programming for data analysis",
+          progress: 0,
+          color: "#3776ab",
+        },
+        {
+          id: "statistics",
+          icon: "📈",
+          name: "Statistics",
+          desc: "Statistical concepts for data science",
+          progress: 0,
+          color: "#e44d2e",
+        },
+        {
+          id: "powerbi",
+          icon: "📉",
+          name: "Power BI",
+          desc: "Interactive dashboards and visualizations",
+          progress: 0,
+          color: "#f2c811",
+        },
+        {
+          id: "tableau",
+          icon: "📊",
+          name: "Tableau",
+          desc: "Data visualization and storytelling",
+          progress: 0,
+          color: "#e44d2e",
+        },
+      ];
+
+      const quizData = {
+        beginner: [
+          {
+            q: "What is the average of 10, 20, 30?",
+            options: ["15", "20", "25", "30"],
+            correct: 1,
+          },
+          {
+            q: "Which SQL keyword is used to retrieve data?",
+            options: ["INSERT", "SELECT", "UPDATE", "DELETE"],
+            correct: 1,
+          },
+          {
+            q: "What is the file extension for Excel files?",
+            options: [".txt", ".csv", ".xlsx", ".json"],
+            correct: 2,
+          },
+        ],
+        intermediate: [
+          {
+            q: "What is a JOIN in SQL?",
+            options: [
+              "A type of table",
+              "Combining rows from tables",
+              "Deleting data",
+              "Creating indexes",
+            ],
+            correct: 1,
+          },
+          {
+            q: "Which Python library is used for data manipulation?",
+            options: ["Matplotlib", "Pandas", "NumPy", "Scikit-learn"],
+            correct: 1,
+          },
+          {
+            q: "What does ETL stand for?",
+            options: [
+              "Extract, Transform, Load",
+              "Edit, Transfer, Load",
+              "Extract, Transfer, Link",
+              "Edit, Transform, Link",
+            ],
+            correct: 0,
+          },
+        ],
+        advanced: [
+          {
+            q: "What is the difference between INNER JOIN and LEFT JOIN?",
+            options: [
+              "No difference",
+              "LEFT JOIN returns all rows from left table",
+              "INNER JOIN is faster",
+              "LEFT JOIN is deprecated",
+            ],
+            correct: 1,
+          },
+          {
+            q: "Which algorithm is used for classification?",
+            options: ["Linear Regression", "K-Means", "Decision Tree", "PCA"],
+            correct: 2,
+          },
+          {
+            q: "What is overfitting in machine learning?",
+            options: [
+              "Model performs well on training but not test data",
+              "Model performs well on all data",
+              "Model is too simple",
+              "Model has too few parameters",
+            ],
+            correct: 0,
+          },
+        ],
+      };
+
+      const tasksData = [
+        {
+          title: "Clean a CSV Dataset",
+          desc: "Remove duplicates and handle missing values",
+          done: false,
+        },
+        {
+          title: "Write a SQL Query",
+          desc: "Retrieve sales data from a database",
+          done: false,
+        },
+        {
+          title: "Build a Power BI Dashboard",
+          desc: "Create an interactive sales dashboard",
+          done: false,
+        },
+        {
+          title: "Create Visualizations",
+          desc: "Generate charts using Python/Matplotlib",
+          done: false,
+        },
+      ];
+
+      const projectsData = [
+        {
+          title: "Sales Analysis Dashboard",
+          desc: "Analyze sales trends and create interactive dashboard",
+          difficulty: "beginner",
+          tools: "Excel, Power BI",
+        },
+        {
+          title: "Student Performance Analysis",
+          desc: "Analyze student grades and identify patterns",
+          difficulty: "beginner",
+          tools: "Python, Pandas",
+        },
+        {
+          title: "Hotel Booking Analysis",
+          desc: "Analyze booking patterns and cancellations",
+          difficulty: "intermediate",
+          tools: "SQL, Tableau",
+        },
+        {
+          title: "E-commerce Analytics",
+          desc: "Customer behavior and sales analysis",
+          difficulty: "intermediate",
+          tools: "Python, Power BI",
+        },
+        {
+          title: "Customer Churn Prediction",
+          desc: "Predict customer churn using ML",
+          difficulty: "advanced",
+          tools: "Python, Scikit-learn",
+        },
+        {
+          title: "Financial Analytics Dashboard",
+          desc: "Analyze financial data and create dashboards",
+          difficulty: "advanced",
+          tools: "Python, Tableau",
+        },
+      ];
+
+      const datasetsData = [
+        {
+          name: "Sales Data 2023",
+          desc: "Monthly sales data for retail company",
+          category: "business",
+          difficulty: "Beginner",
+        },
+        {
+          name: "COVID-19 Cases",
+          desc: "Global COVID-19 case data",
+          category: "health",
+          difficulty: "Intermediate",
+        },
+        {
+          name: "Student Grades",
+          desc: "Student academic performance data",
+          category: "education",
+          difficulty: "Beginner",
+        },
+        {
+          name: "Stock Market Data",
+          desc: "Historical stock prices and volumes",
+          category: "finance",
+          difficulty: "Advanced",
+        },
+        {
+          name: "E-commerce Orders",
+          desc: "Online store order and customer data",
+          category: "ecommerce",
+          difficulty: "Intermediate",
+        },
+        {
+          name: "Healthcare Claims",
+          desc: "Medical insurance claims data",
+          category: "health",
+          difficulty: "Advanced",
+        },
+      ];
+
+      const resourcesData = [
+        {
+          name: "Python Documentation",
+          icon: "🐍",
+          link: "https://docs.python.org/3/",
+        },
+        {
+          name: "SQL Tutorial",
+          icon: "🗄️",
+          link: "https://www.w3schools.com/sql/",
+        },
+        {
+          name: "Power BI Learning",
+          icon: "📊",
+          link: "https://learn.microsoft.com/power-bi/",
+        },
+        {
+          name: "Kaggle Datasets",
+          icon: "📁",
+          link: "https://www.kaggle.com/datasets",
+        },
+        { name: "DataCamp", icon: "🎓", link: "https://www.datacamp.com/" },
+        {
+          name: "Tableau Public",
+          icon: "📈",
+          link: "https://public.tableau.com/",
+        },
+      ];
+
+      // ===== STATE =====
+      let state = {
+        modules:
+          JSON.parse(localStorage.getItem("hub_modules")) ||
+          modulesData.map((m) => ({ ...m, progress: 0 })),
+        tasks: JSON.parse(localStorage.getItem("hub_tasks")) || tasksData,
+        quizScores: JSON.parse(localStorage.getItem("hub_quizScores")) || [],
+        streak: parseInt(localStorage.getItem("hub_streak")) || 0,
+        lastActive: localStorage.getItem("hub_lastActive") || null,
+        favorites: JSON.parse(localStorage.getItem("hub_favorites")) || [],
+        completedModules:
+          JSON.parse(localStorage.getItem("hub_completedModules")) || [],
+        currentQuiz: 0,
+        quizLevel: "beginner",
+      };
+
+      function saveState() {
+        localStorage.setItem("hub_modules", JSON.stringify(state.modules));
+        localStorage.setItem("hub_tasks", JSON.stringify(state.tasks));
+        localStorage.setItem(
+          "hub_quizScores",
+          JSON.stringify(state.quizScores)
+        );
+        localStorage.setItem("hub_streak", state.streak.toString());
+        localStorage.setItem("hub_lastActive", state.lastActive);
+        localStorage.setItem("hub_favorites", JSON.stringify(state.favorites));
+        localStorage.setItem(
+          "hub_completedModules",
+          JSON.stringify(state.completedModules)
+        );
+      }
+
+      function updateStreak() {
+        const today = new Date().toDateString();
+        if (state.lastActive !== today) {
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          if (state.lastActive === yesterday.toDateString()) {
+            state.streak++;
+          } else {
+            state.streak = 1;
+          }
+          state.lastActive = today;
+          saveState();
+        }
+      }
+      updateStreak();
+
+      // ===== RENDER FUNCTIONS =====
+      function renderModules() {
+        const grid = document.getElementById("modulesGrid");
+        grid.innerHTML = state.modules
+          .map(
+            (m) => `
+                <div class="module-card glow-border" onclick="completeModule('${
+                  m.id
+                }')">
+                    <div class="module-icon">${m.icon}</div>
+                    <h3>${m.name}</h3>
+                    <p style="color:#6b7280;font-size:0.9rem;">${m.desc}</p>
+                    <div class="progress-bar">
+                        <div class="fill" style="width:${
+                          m.progress
+                        }%;background:${m.color};"></div>
+                    </div>
+                    <div class="module-stats">
+                        <span>${m.progress}% complete</span>
+                        <span>${
+                          state.completedModules.includes(m.id)
+                            ? "✅ Completed"
+                            : "⬜ In Progress"
+                        }</span>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+        updateProfileStats();
+      }
+
+      function completeModule(id) {
+        const mod = state.modules.find((m) => m.id === id);
+        if (mod && !state.completedModules.includes(id)) {
+          mod.progress = Math.min(mod.progress + 25, 100);
+          if (mod.progress === 100) {
+            state.completedModules.push(id);
+          }
+          saveState();
+          renderModules();
+          renderTasks();
+          renderProjects();
+          renderDatasets();
+          renderResources();
+          renderProfile();
+        }
+      }
+
+      function renderQuiz() {
+        const level = state.quizLevel;
+        const questions = quizData[level];
+        if (!questions) return;
+        const q = questions[state.currentQuiz];
+        if (!q) {
+          // Quiz complete
+          document.getElementById("quizCard").innerHTML = `
+                    <div style="text-align:center;padding:2rem;">
+                        <h3>🎉 Quiz Complete!</h3>
+                        <p style="margin:1rem 0;">Great job on the ${level} quiz!</p>
+                        <button class="btn btn-primary btn-sm" onclick="resetQuiz()">Retake Quiz</button>
+                    </div>
+                `;
+          return;
+        }
+        document.getElementById("quizCard").innerHTML = `
+                <div class="question">${q.q}</div>
+                <div class="options">
+                    ${q.options
+                      .map(
+                        (opt, i) => `
+                        <label onclick="checkAnswer(${i})">
+                            <input type="radio" name="quiz" value="${i}" />
+                            ${opt}
+                        </label>
+                    `
+                      )
+                      .join("")}
+                </div>
+                <div id="quizFeedback"></div>
+                <div style="margin-top:1rem;display:flex;justify-content:space-between;font-size:0.9rem;color:#6b7280;">
+                    <span>Question ${state.currentQuiz + 1}/${
+          questions.length
+        }</span>
+                    <span>Level: ${level}</span>
+                </div>
+            `;
+      }
+
+      let quizAnswered = false;
+
+      function checkAnswer(index) {
+        if (quizAnswered) return;
+        quizAnswered = true;
+        const level = state.quizLevel;
+        const questions = quizData[level];
+        const q = questions[state.currentQuiz];
+        const labels = document.querySelectorAll(".quiz-card .options label");
+        labels.forEach((label, i) => {
+          if (i === q.correct) label.classList.add("correct");
+          else if (i === index && i !== q.correct) label.classList.add("wrong");
+        });
+        const feedback = document.getElementById("quizFeedback");
+        if (index === q.correct) {
+          feedback.innerHTML = `<div class="quiz-result correct">✅ Correct! Well done!</div>`;
+          state.quizScores.push({ level, correct: true });
+        } else {
+          feedback.innerHTML = `<div class="quiz-result wrong">❌ Incorrect. The correct answer was: ${
+            q.options[q.correct]
+          }</div>`;
+          state.quizScores.push({ level, correct: false });
+        }
+        saveState();
+        setTimeout(() => {
+          quizAnswered = false;
+          state.currentQuiz++;
+          renderQuiz();
+          updateProfileStats();
+        }, 2000);
+      }
+
+      function resetQuiz() {
+        state.currentQuiz = 0;
+        quizAnswered = false;
+        renderQuiz();
+      }
+
+      function renderTasks() {
+        const grid = document.getElementById("tasksGrid");
+        grid.innerHTML = state.tasks
+          .map(
+            (task, i) => `
+                <div class="task-card glow-border">
+                    <h3>${task.title}</h3>
+                    <p style="color:#6b7280;font-size:0.9rem;margin:0.5rem 0;">${
+                      task.desc
+                    }</p>
+                    <span class="task-status ${
+                      task.done ? "done" : "pending"
+                    }">${task.done ? "✅ Done" : "⏳ Pending"}</span>
+                    ${
+                      !task.done
+                        ? `<button class="btn btn-green btn-sm" style="margin-top:0.8rem;" onclick="completeTask(${i})">Mark Complete</button>`
+                        : ""
+                    }
+                </div>
+            `
+          )
+          .join("");
+        updateProfileStats();
+      }
+
+      function completeTask(index) {
+        state.tasks[index].done = true;
+        saveState();
+        renderTasks();
+        renderModules();
+        renderProjects();
+        renderDatasets();
+        renderResources();
+        renderProfile();
+        updateProfileStats();
+      }
+
+      function renderProjects() {
+        const grid = document.getElementById("projectsGrid");
+        grid.innerHTML = projectsData
+          .map(
+            (p) => `
+                <div class="project-card glow-border">
+                    <h3>${p.title}</h3>
+                    <p style="color:#6b7280;font-size:0.9rem;margin:0.5rem 0;">${p.desc}</p>
+                    <span class="difficulty ${p.difficulty}">${p.difficulty}</span>
+                    <p style="margin-top:0.5rem;font-size:0.85rem;color:#6b7280;">🛠️ ${p.tools}</p>
+                    <button class="btn btn-primary btn-sm" style="margin-top:0.8rem;" onclick="alert('Project details: ${p.title}')">View Project</button>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function renderDatasets() {
+        const search = document
+          .getElementById("datasetSearch")
+          .value.toLowerCase();
+        const filter = document.getElementById("datasetFilter").value;
+        const filtered = datasetsData.filter((d) => {
+          const matchSearch =
+            d.name.toLowerCase().includes(search) ||
+            d.desc.toLowerCase().includes(search);
+          const matchFilter = filter === "all" || d.category === filter;
+          return matchSearch && matchFilter;
+        });
+        const grid = document.getElementById("datasetsGrid");
+        grid.innerHTML = filtered
+          .map((d) => {
+            const isFav = state.favorites.includes(d.name);
+            return `
+                    <div class="dataset-card glow-border">
+                        <div style="display:flex;justify-content:space-between;align-items:start;">
+                            <h3>${d.name}</h3>
+                            <button class="favorite-btn ${
+                              isFav ? "liked" : ""
+                            }" onclick="toggleFavorite('${d.name}')">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                        <p style="color:#6b7280;font-size:0.9rem;margin:0.5rem 0;">${
+                          d.desc
+                        }</p>
+                        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.5rem 0;">
+                            <span class="skill-tag">${d.category}</span>
+                            <span class="skill-tag">${d.difficulty}</span>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="alert('Dataset: ${
+                          d.name
+                        }\\nAvailable at Kaggle/UCI Repository')">View Dataset</button>
+                    </div>
+                `;
+          })
+          .join("");
+      }
+
+      function toggleFavorite(name) {
+        const idx = state.favorites.indexOf(name);
+        if (idx > -1) state.favorites.splice(idx, 1);
+        else state.favorites.push(name);
+        saveState();
+        renderDatasets();
+      }
+
+      function renderResources() {
+        const grid = document.getElementById("resourcesGrid");
+        grid.innerHTML = resourcesData
+          .map(
+            (r) => `
+                <a href="${r.link}" target="_blank" class="resource-card glow-border" style="text-decoration:none;color:inherit;display:block;">
+                    <div class="resource-icon">${r.icon}</div>
+                    <h3>${r.name}</h3>
+                    <p style="color:#8b5cf6;font-size:0.9rem;">Click to visit →</p>
+                </a>
+            `
+          )
+          .join("");
+      }
+
+      function renderProfile() {
+        const completed = state.completedModules.length;
+        const quizzes = state.quizScores.length;
+        const tasksDone = state.tasks.filter((t) => t.done).length;
+        document.getElementById("statModules").textContent = completed;
+        document.getElementById("statQuizzes").textContent = quizzes;
+        document.getElementById("statTasks").textContent = tasksDone;
+        document.getElementById("statStreak").textContent =
+          state.streak + " days";
+
+        const achievements = document.getElementById("achievementsList");
+        if (completed >= 3) {
+          achievements.innerHTML = `<div style="padding:0.5rem;background:#d1fae5;border-radius:8px;">🏆 Completed 3+ modules</div>`;
+        } else if (completed >= 1) {
+          achievements.innerHTML = `<div style="padding:0.5rem;background:#fef3c7;border-radius:8px;">⭐ Started your learning journey</div>`;
+        } else {
+          achievements.innerHTML = `<p style="color:#6b7280;">Complete modules to earn achievements!</p>`;
+        }
+        updateProfileStats();
+      }
+
+      function updateProfileStats() {
+        const completed = state.completedModules.length;
+        const quizzes = state.quizScores.length;
+        const tasksDone = state.tasks.filter((t) => t.done).length;
+        document.getElementById("statModules").textContent = completed;
+        document.getElementById("statQuizzes").textContent = quizzes;
+        document.getElementById("statTasks").textContent = tasksDone;
+        document.getElementById("statStreak").textContent =
+          state.streak + " days";
+      }
+
+      // ===== CHATBOT =====
+      const chatResponses = {
+        "data analytics":
+          "Data analytics is the process of examining data to draw conclusions and make informed decisions. It involves data cleaning, transformation, and visualization.",
+        python:
+          "Python is a versatile programming language widely used in data analytics. Key libraries include Pandas, NumPy, Matplotlib, and Scikit-learn.",
+        sql: "SQL (Structured Query Language) is used to manage and query relational databases. It's essential for data extraction and manipulation.",
+        excel:
+          "Excel is a spreadsheet tool used for data analysis, reporting, and visualization. It includes powerful functions, pivot tables, and charts.",
+        "power bi":
+          "Power BI is a business analytics tool by Microsoft for creating interactive dashboards and reports from various data sources.",
+        tableau:
+          "Tableau is a data visualization tool that helps create interactive and shareable dashboards with a user-friendly interface.",
+        statistics:
+          "Statistics involves collecting, analyzing, and interpreting data. Key concepts include mean, median, standard deviation, and hypothesis testing.",
+        project:
+          "Start with a sales analysis or student performance project. Use real datasets from Kaggle or UCI repository.",
+        interview:
+          "Common data analyst interview questions cover SQL, Python, statistics, and case studies. Practice with real datasets.",
+        resources:
+          "Great resources include Kaggle, DataCamp, Coursera, YouTube channels like Alex The Analyst, and documentation.",
+      };
+
+      function getBotResponse(msg) {
+        const lower = msg.toLowerCase();
+        for (const [key, response] of Object.entries(chatResponses)) {
+          if (lower.includes(key)) return response;
+        }
+        if (lower.includes("hello") || lower.includes("hi")) {
+          return "Hello! How can I help you with data analytics today?";
+        }
+        if (lower.includes("help")) {
+          return "I can help with data analytics questions. Ask me about Python, SQL, Power BI, Tableau, statistics, projects, or resources!";
+        }
+        return "That's a great question! Try exploring our modules, or ask me about Python, SQL, Power BI, Tableau, or statistics.";
+      }
+
+      // Chat UI
+      const chatToggle = document.getElementById("chatToggle");
+      const chatBox = document.getElementById("chatBox");
+      const chatClose = document.getElementById("chatClose");
+      const chatSend = document.getElementById("chatSend");
+      const chatInput = document.getElementById("chatInput");
+      const chatMessages = document.getElementById("chatMessages");
+      const typingIndicator = document.getElementById("typingIndicator");
+
+      chatToggle.addEventListener("click", () =>
+        chatBox.classList.toggle("open")
+      );
+      chatClose.addEventListener("click", () =>
+        chatBox.classList.remove("open")
+      );
+
+      function addMessage(text, sender) {
+        const div = document.createElement("div");
+        div.className = `message ${sender}`;
+        div.textContent = text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        addMessage(text, "user");
+        chatInput.value = "";
+        typingIndicator.style.display = "flex";
+        setTimeout(() => {
+          typingIndicator.style.display = "none";
+          const reply = getBotResponse(text);
+          addMessage(reply, "bot");
+        }, 800 + Math.random() * 600);
+      }
+
+      chatSend.addEventListener("click", sendMessage);
+      chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+
+      // Suggestion buttons
+      document.querySelectorAll(".suggestions button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          chatInput.value = btn.dataset.msg;
+          sendMessage();
+        });
+      });
+
+      // ===== NAVIGATION ACTIVE STATE =====
+      document.querySelectorAll(".nav-menu a").forEach((link) => {
+        link.addEventListener("click", function () {
+          document
+            .querySelectorAll(".nav-menu a")
+            .forEach((l) => l.classList.remove("active"));
+          this.classList.add("active");
+          document.getElementById("nav-toggle").checked = false;
+        });
+      });
+
+      // ===== SEARCH & FILTER =====
+      document
+        .getElementById("datasetSearch")
+        .addEventListener("input", renderDatasets);
+      document
+        .getElementById("datasetFilter")
+        .addEventListener("change", renderDatasets);
+
+      // ===== QUIZ TABS =====
+      document.querySelectorAll(".quiz-tab").forEach((tab) => {
+        tab.addEventListener("click", function () {
+          document
+            .querySelectorAll(".quiz-tab")
+            .forEach((t) => t.classList.remove("active"));
+          this.classList.add("active");
+          state.quizLevel = this.dataset.level;
+          state.currentQuiz = 0;
+          quizAnswered = false;
+          renderQuiz();
+        });
+      });
+
+      // ===== MODAL =====
+      const modal = document.getElementById("welcomeModal");
+      const closeModal = document.getElementById("closeModal");
+      const modalGotIt = document.getElementById("modalGotIt");
+
+      function closeModalFunc() {
+        modal.classList.remove("show");
+      }
+      closeModal.addEventListener("click", closeModalFunc);
+      modalGotIt.addEventListener("click", closeModalFunc);
+      window.addEventListener("click", (e) => {
+        if (e.target === modal) closeModalFunc();
+      });
+
+      // ===== SCROLL PROGRESS =====
+      const progressBar = document.getElementById("scroll-progress");
+      window.addEventListener("scroll", () => {
+        const winScroll = document.documentElement.scrollTop;
+        const height =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        progressBar.style.width = scrolled + "%";
+      });
+
+      // ===== PARTICLES =====
+      const canvas = document.getElementById("particle-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height;
+      let particles = [];
+
+      function initParticles(count = 80) {
+        particles = [];
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random(),
+            y: Math.random(),
+            radius: Math.random() * 3 + 1,
+            speedX: (Math.random() - 0.5) * 0.002,
+            speedY: (Math.random() - 0.5) * 0.002,
+            color: i % 2 === 0 ? "#8b5cf6" : "#10b981",
+            alpha: Math.random() * 0.3 + 0.1,
+          });
+        }
+      }
+
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      function drawParticles() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach((p) => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          if (p.x < 0) p.x = 1;
+          if (p.x > 1) p.x = 0;
+          if (p.y < 0) p.y = 1;
+          if (p.y > 1) p.y = 0;
+
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x * width, p.y * height, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        requestAnimationFrame(drawParticles);
+      }
+
+      window.addEventListener("resize", () => {
+        resizeCanvas();
+      });
+      resizeCanvas();
+      initParticles(100);
+      drawParticles();
+
+      // ===== REVEAL OBSERVER =====
+      const revealElements = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("revealed");
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      revealElements.forEach((el) => observer.observe(el));
+
+      // ===== INIT RENDER =====
+      renderModules();
+      renderQuiz();
+      renderTasks();
+      renderProjects();
+      renderDatasets();
+      renderResources();
+      renderProfile();
+
+      console.log("📊 Data Analyst Learning Hub loaded successfully!");
+    </script>
+  </body>
+</html>
